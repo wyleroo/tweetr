@@ -1,5 +1,6 @@
 $(document).ready(function () {
 
+  // Render each tweet. Called on line 42 in GET request and line 72 for new tweet
   function renderTweets (tweetArray) {
     tweetArray.forEach(function(element) {
       let currentTweet = $(createTweetElement(element));
@@ -8,6 +9,7 @@ $(document).ready(function () {
     return $('.tweet');
   }
 
+  // Create new DOM element for new tweet
   function createTweetElement (input) {
     let postDate = new Date(input.created_at).toDateString();
     let header_username = $('<div></div>').addClass('username').append('<p>' + input.user.name + '</p>');
@@ -24,12 +26,14 @@ $(document).ready(function () {
     return article;
   }
 
+  // Show/hide new tweet form
   $('.toggle').on('click',function () {
     $('.new-tweet').slideToggle("slow", function() {
       $('.text-area').focus();
     });
   });
 
+  // Render stored tweets
   $.ajax({
     method: 'GET',
     url: '/tweets',
@@ -37,11 +41,13 @@ $(document).ready(function () {
     renderTweets(tweets);
   });
 
+  // Prevent form resubmission
   $('#tweet-form').on('submit', function (event) {
     event.preventDefault();
     var newTweet = $('.text-area');
     var newTweetText = newTweet.val();
 
+    // Tweet creation
     if (newTweetText.length > 140) {
       $('.warning p').text('Tweet is too long.')
       return;
@@ -50,12 +56,14 @@ $(document).ready(function () {
       return;
     } else {
       $('.warning p').text('');
+      // Tweet submission
       $.ajax({
       url: '/tweets',
       method: 'POST',
       data: {
         text: newTweetText
       }
+      // After tweet submission reset form and display new tweet
       }).done(function () {
       newTweet.val('');
       newTweet.focus();
@@ -70,7 +78,3 @@ $(document).ready(function () {
     }
   });
 });
-
-
-
-
